@@ -1,10 +1,11 @@
-#include "TcpServer.h"
+#include "tcpServer.h"
 #include "threadPool.h"
-#include "result.h"
+#include "cache.h"
+#include "mylog.h"
 #include <iostream>
 
 ThreadPool* threadpoolPtr = NULL;
-Result* resultPtr = NULL;
+Cache* cachePtr = NULL;
 
 using namespace std;
 
@@ -19,16 +20,29 @@ public:
 	}
 	
 	void process(){
+		for(auto& ch : _queryWord){
+			if(!isalpha(ch) && !isspace(ch)){
+				_conn -> send("ERROR: Invalid Input");
+				return ;
+			}
+
+			ch = tolower(ch);
+		}
+
 		vector<string> wordslist;
-		wordslist = resultPtr -> getResult(_queryWord);
+		wordslist = cachePtr -> searchFromCache(_queryWord);		
+		
+		string buf;
 
 		cout << _queryWord << endl;
 		cout << "---------" << endl;
 		for(auto& word : wordslist){
+			buf.append(word);
+			buf.append(" ");
 			cout << word << endl;
 		}
 		cout << "---------" << endl;
-		//_conn -> sendInLoop(_query);
+		_conn -> sendInLoop(buf);
 	}
 
 private:
@@ -38,8 +52,7 @@ private:
 };
 
 void onConnection(const TcpConnectionPtr& conn){
-	cout << conn -> toString() << endl;
-	conn -> send("welcome");
+	LogInfo("CONNECTION: %s", conn -> toString().c_str());
 }
 
 void onMessage(const TcpConnectionPtr& conn){
@@ -50,8 +63,7 @@ void onMessage(const TcpConnectionPtr& conn){
 }
 
 void onClose(const TcpConnectionPtr& conn){
-	cout << "close" << endl;
-	cout << conn -> toString() << endl;
+	LogInfo("DISCONNECTION: %s", conn -> toString().c_str());
 }
 
 int main(){
@@ -59,13 +71,14 @@ int main(){
 	threadpoolPtr = &threadpool;
 	threadpool.start();
 	
-	Result result("/home/hey/code/SpellCorrect/conf/config.txt");
-	resultPtr = &result;
+	Cache cache(10000, "/home/hey/code/SpellCorrect/conf/config.txt");
+	cachePtr = &cache;
 	
 	TcpServer tcpServer("192.168.184.128", 1994);
 	tcpServer.setConnectionCallback(&onConnection);
 	tcpServer.setMessageCallback(&onMessage);
 	tcpServer.setCloseCallback(&onClose);
 	
+	LogInfo("Syetem Online");
 	tcpServer.start();
 }

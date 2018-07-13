@@ -141,9 +141,6 @@ void EpollPoller :: waitEpollfd(){
 			else if(_eventfd == _eventList[i].data.fd){
 				handleRead();
 				doPendingFunctors();
-				
-
-				cout << "im done" << endl;
 			}
 			else{
 				if(_eventList[i].events & EPOLLIN){
@@ -205,8 +202,6 @@ void EpollPoller :: doPendingFunctors(){
 	for(auto& functor : temp){
 		functor();
 	}
-
-	cout << "doPendingFunctors" << endl;
 }
 
 void EpollPoller :: handleRead(){

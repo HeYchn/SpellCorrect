@@ -1,4 +1,4 @@
-#include "TcpServer.h"
+#include "tcpServer.h"
 #include "socket.h"
 
 TcpServer :: TcpServer(const string& ip, short port)
