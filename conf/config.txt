@@ -1,6 +1,6 @@
 ENG_SOURCE /home/hey/code/SpellCorrect/data/english.dat
-ZH_SOURCE /home/hey/code/SpellCorrect/data/zh.dat
+ZH_SOURCE /home/hey/code/SpellCorrect/data/zh/weicheng.utf8
 ENG_DICTIONARY /home/hey/code/SpellCorrect/data/dictionary.dat
-ZH_DICTIONARY ...
+ZH_DICTIONARY /home/hey/code/SpellCorrect/data/dictionaryZh.dat
 ENG_INDEX /home/hey/code/SpellCorrect/data/index.dat
 ZH_INDEX ...

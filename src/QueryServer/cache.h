@@ -3,6 +3,7 @@
 
 #include "result.h"
 #include "MutexLock.h"
+#include <hiredis/hiredis.h>
 #include <deque>
 
 using namespace std;
@@ -10,20 +11,14 @@ using namespace std;
 class Cache{
 
 public:
-	Cache(size_t, const string&);
-
+	Cache(const string&, int, Result&);
 	vector<string> searchFromCache(const string&);
-	size_t size();
 
 private:
-	void insertToCache(string, vector<string>);
-	void removeFromCache();
-	
+	vector<string> insertIntoCache(const string&);
 private:
-	deque<pair<string, vector<string>>> _cache;
-	size_t _capacity;
-	Result _result;
-	MutexLock _mutex;
+	redisContext* _pContext;
+	Result& _result;
 };
 
 #endif

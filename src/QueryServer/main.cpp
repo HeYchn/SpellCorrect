@@ -5,7 +5,6 @@
 #include <iostream>
 
 ThreadPool* threadpoolPtr = NULL;
-Cache* cachePtr = NULL;
 
 using namespace std;
 
@@ -30,8 +29,11 @@ public:
 		}
 
 		vector<string> wordslist;
-		wordslist = cachePtr -> searchFromCache(_queryWord);		
 		
+		Result result("../../conf/config.txt");		
+		Cache cache("127.0.0.1", 6379, result);
+		
+		wordslist = cache.searchFromCache(_queryWord);
 		string buf;
 
 		cout << _queryWord << endl;
@@ -70,9 +72,6 @@ int main(){
 	ThreadPool threadpool(10, 20);
 	threadpoolPtr = &threadpool;
 	threadpool.start();
-	
-	Cache cache(10000, "/home/hey/code/SpellCorrect/conf/config.txt");
-	cachePtr = &cache;
 	
 	TcpServer tcpServer("192.168.184.128", 1994);
 	tcpServer.setConnectionCallback(&onConnection);
